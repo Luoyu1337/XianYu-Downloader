@@ -82,7 +82,7 @@ MIT License
 
 如果对你有帮助，请给个 ⭐️ Star 吧！
 <a href="tencent://message/?uin=407486320&Site=&Menu=yes" 
-target="_blank" title="点击添加服主好友">🐧QQ:757453794</a>
+target="_blank" title="点击添加服主好友">🐧QQ:407486320</a>
 
 [返回顶部](#-闲鱼图片下载器)
 
