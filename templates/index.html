@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>闲鱼图片下载器 v1.0.0</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#f0f2f5;--card:#fff;--text:#1d2129;--t2:#4e5969;--t3:#86909c;--bd:#e5e6eb;--blue:#165dff;--green:#00b42a;--orange:#ff7d00;--red:#f53f3f;--shadow:0 2px 8px rgba(0,0,0,0.06)}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:32px 16px;display:flex;justify-content:center}
+.w{width:100%;max-width:760px}
+
+/* 头部 */
+.hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.hd-l{display:flex;align-items:center;gap:10px}
+.hd-l h1{font-size:22px;font-weight:600}
+.hd-l .ver{font-size:12px;background:#e8f3ff;color:var(--blue);padding:2px 8px;border-radius:4px;margin-left:4px}
+.hd-r{font-size:13px;color:var(--t3);display:flex;align-items:center;gap:8px}
+.hd-r a{color:var(--blue);text-decoration:none}
+
+/* 快捷栏 */
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.bar span{font-size:13px;color:var(--t2);background:var(--card);padding:6px 14px;border-radius:6px;border:1px solid var(--bd);display:flex;align-items:center;gap:6px}
+.bar kbd{padding:1px 6px;background:var(--bg);border:1px solid var(--bd);border-radius:3px;font-size:11px;color:var(--blue);font-family:inherit}
+
+/* 卡片 */
+.cd{background:var(--card);border-radius:8px;box-shadow:var(--shadow);margin-bottom:16px}
+.cb{padding:20px}
+.ct{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.ct .l{font-size:15px;font-weight:600;display:flex;align-items:center;gap:6px}
+.ct .r{font-size:12px;color:var(--t3)}
+
+/* 输入框 */
+.iw textarea{width:100%;min-height:120px;padding:12px 14px;border:1px solid var(--bd);border-radius:6px;font-size:14px;font-family:inherit;line-height:1.6;resize:vertical;outline:none;transition:all .2s;color:var(--text);background:#f7f8fa}
+.iw textarea:focus{border-color:var(--blue);background:#fff}
+.iw textarea::placeholder{color:var(--t3)}
+.ht{margin-top:8px;font-size:12px;min-height:18px}
+
+/* 按钮行 */
+.ac{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.btn{display:inline-flex;align-items:center;gap:4px;padding:8px 20px;border:none;border-radius:6px;font-size:14px;font-family:inherit;font-weight:500;cursor:pointer;transition:all .2s}
+.btn-p{background:var(--blue);color:#fff}
+.btn-p:hover{opacity:.85}
+.btn-p:disabled{opacity:.4;cursor:not-allowed}
+.btn-s{background:var(--card);color:var(--t2);border:1px solid var(--bd)}
+.btn-s:hover{color:var(--blue);border-color:var(--blue)}
+.ac .st{margin-left:auto;font-size:13px;color:var(--t3);padding:4px 10px;background:var(--bg);border-radius:4px}
+.ac .st.proc{color:var(--blue);background:#e8f3ff}
+.ac .st.ok{color:var(--green);background:#e8f8e8}
+.ac .st.fail{color:var(--red);background:#ffe8e8}
+
+/* 日志 */
+.lg{background:#f7f8fa;border:1px solid var(--bd);border-radius:6px;padding:12px 14px;min-height:160px;max-height:280px;font-family:Consolas,'Courier New',monospace;font-size:12px;line-height:1.8;overflow-y:auto;white-space:pre-wrap;word-break:break-all}
+.lg:empty::before{content:'等待输入...';color:var(--t3)}
+.lt{color:var(--t3)}.li{color:var(--text)}.ls{color:var(--green)}.lw{color:var(--orange)}.le{color:var(--red)}
+
+/* 结果 */
+.stats{display:flex;gap:24px;padding:4px 0}
+.stats .s{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--t2)}
+.stats .s .n{font-size:22px;font-weight:700}
+.stats .s .nb{color:var(--blue)}
+.stats .s .ng{color:var(--green)}
+.stats .s .nr{color:var(--red)}
+.pi{margin-top:8px;font-size:12px;color:var(--t2);word-break:break-all}
+.pi sp{color:var(--blue);font-weight:500}
+
+/* 底部 */
+.ft{text-align:center;padding:20px 0 4px;font-size:12px;color:var(--t3);display:flex;justify-content:center;align-items:center;gap:8px}
+.ft a{color:var(--blue);text-decoration:none}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:#c9cdd4;border-radius:3px}
+</style>
+</head>
+<body>
+<div class="w">
+
+<div class="hd">
+<div class="hd-l">
+<div> 
+<h1>闲鱼下载器 <span class="ver">v1.0.0</span></h1>
+</div>
+</div>
+<div class="hd-r">
+<a href="javascript:void(0)" onclick="showChangelog()">📋 更新日志</a>
+</div>
+</div>
+
+<div class="bar">
+<span><kbd>Ctrl</kbd>+<kbd>Enter</kbd> 开始</span>
+<span>📎 支持图片链接</span>
+<span>🎬 支持视频链接</span>
+<span>📦 支持商品链接</span>
+</div>
+
+<div class="cd">
+<div class="cb">
+<div class="ct"><span class="l">📎 粘贴链接</span><span class="r">每行一个，自动识别类型</span></div>
+<div class="iw">
+<textarea id="ta" rows="4" placeholder="粘贴闲鱼图片/视频/商品链接..."></textarea>
+<div class="ht" id="ht"></div>
+</div>
+</div>
+</div>
+
+<div class="ac">
+<button class="btn btn-p" id="btnGo">🚀 开始下载</button>
+<button class="btn btn-s" id="btnClr">🗑️ 清空</button>
+<span class="st" id="st">就绪</span>
+</div>
+
+<div class="cd" id="rc" style="display:none">
+<div class="cb">
+<div class="ct"><span class="l">📋 下载结果</span></div>
+<div class="stats">
+<div class="s">总计 <span class="n nb" id="t0">0</span></div>
+<div class="s">成功 <span class="n ng" id="t1">0</span></div>
+<div class="s">失败 <span class="n nr" id="t2">0</span></div>
+</div>
+<div class="pi" id="pi" style="display:none">保存位置：<sp id="pt"></sp></div>
+</div>
+</div>
+
+<div class="cd">
+<div class="cb">
+<div class="ct"><span class="l">📋 运行日志</span></div>
+<div class="lg" id="lg"></div>
+</div>
+</div>
+
+<div class="ft">
+<span>闲鱼下载器 v1.0.0 🎉</span>
+<span>·</span>
+<span>支持图片 + 视频</span>
+</div>
+</div>
+
+<script>
+(function(){
+var ta=document.getElementById('ta'),ht=document.getElementById('ht'),lg=document.getElementById('lg');
+var st=document.getElementById('st'),btnGo=document.getElementById('btnGo'),btnClr=document.getElementById('btnClr');
+var rc=document.getElementById('rc'),t0=document.getElementById('t0'),t1=document.getElementById('t1'),t2=document.getElementById('t2');
+var pi=document.getElementById('pi'),pt=document.getElementById('pt');
+var tid=null,pol=false;
+
+// 快捷键
+ta.addEventListener('keydown',function(e){
+ if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();go();}
+});
+
+// 链接检测
+ta.addEventListener('input',function(){
+ var t=ta.value.trim();
+ if(!t){ht.textContent='';return;}
+ var lines=t.split('\n');
+ var warn=0,ok=0,vid=0;
+ for(var i=0;i<lines.length;i++){
+  var l=lines[i].trim();
+  if(!l)continue;
+  if(/video\.goofish/i.test(l)){vid++;continue;}
+  if(l.indexOf('alicdn')===-1&&l.indexOf('taobao')===-1&&l.indexOf('goofish')===-1)continue;
+  var last=l.split('?')[0].trim();
+  if(/\.(jpg|jpeg|png|webp|gif)$/i.test(last)||/goofish\.com\/item|taobao\.com\/item/i.test(l)){ok++;}
+  else{warn++;}
+ }
+ if(vid>0){ht.innerHTML='<span style="color:var(--green)">🎬 检测到 '+vid+' 个视频链接，可直接下载</span>';}
+ else if(warn>0){ht.innerHTML='<span style="color:var(--orange)">⚠️ 有 '+warn+' 个链接不完整</span>';}
+ else if(ok>0){ht.innerHTML='<span style="color:var(--green)">✅ '+ok+' 个链接格式正常</span>';}
+ else{ht.textContent='';}
+});
+
+function addLog(msg,level){
+ var d=document.createElement('div');
+ var n=new Date();
+ var ts=n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0')+':'+n.getSeconds().toString().padStart(2,'0');
+ d.innerHTML='<span class="lt">['+ts+']</span> <span class="l'+level.substr(0,1)+'">'+msg+'</span>';
+ lg.appendChild(d);lg.scrollTop=lg.scrollHeight;
+}
+
+function setStatus(text,type){
+ st.textContent=text;
+ st.className='st';
+ if(type)st.classList.add(type);
+}
+
+function clean(){ta.value='';lg.innerHTML='';ht.textContent='';rc.style.display='none';setStatus('就绪');}
+btnClr.addEventListener('click',clean);
+
+function go(){
+ var text=ta.value.trim();
+ if(!text){addLog('⚠️ 请先粘贴链接','warning');return;}
+ 
+ var lines=text.split('\n');
+ for(var i=0;i<lines.length;i++){
+  var t=lines[i].trim();
+  if(!t)continue;
+  if(/video\.goofish/i.test(t))continue;
+  if((t.indexOf('alicdn.com')!==-1||t.indexOf('taobaopic.com')!==-1)&&!/\.(jpg|jpeg|png|webp|gif)$/i.test(t.split('?')[0].trim())){
+   addLog('❌ 第'+(i+1)+'行链接不完整','error');
+   addLog('   '+t,'error');
+   setStatus('链接不完整','fail');
+   return;
+  }
+ }
+ 
+ btnGo.disabled=true;setStatus('处理中...','proc');
+ lg.innerHTML='';rc.style.display='none';
+ addLog('🚀 开始下载...','info');
+ 
+ var xhr=new XMLHttpRequest();
+ xhr.open('POST','/api/submit',true);
+ xhr.setRequestHeader('Content-Type','application/json');
+ xhr.onreadystatechange=function(){
+  if(xhr.readyState!==4)return;
+  if(xhr.status!==200){addLog('❌ 请求失败:'+xhr.status,'error');setStatus('错误','fail');btnGo.disabled=false;return;}
+  try{var data=JSON.parse(xhr.responseText);}catch(e){addLog('❌ 解析失败','error');setStatus('错误','fail');btnGo.disabled=false;return;}
+  if(data.error){addLog('❌ '+data.error,'error');setStatus('错误','fail');btnGo.disabled=false;return;}
+  tid=data.task_id;addLog('✅ 任务已提交','success');poll();
+ };
+ xhr.send(JSON.stringify({links:text}));
+}
+btnGo.addEventListener('click',go);
+
+function poll(){
+ if(!tid)return;pol=true;
+ var fn=function(){
+  var xhr=new XMLHttpRequest();
+  xhr.open('GET','/api/status/'+tid,true);
+  xhr.onreadystatechange=function(){
+   if(xhr.readyState!==4)return;
+   if(xhr.status!==200){pol=false;btnGo.disabled=false;setStatus('错误','fail');return;}
+   try{var data=JSON.parse(xhr.responseText);}catch(e){pol=false;btnGo.disabled=false;setStatus('错误','fail');return;}
+   lg.innerHTML='';
+   for(var i=0;i<data.logs.length;i++){
+    var l=data.logs[i];
+    var d=document.createElement('div');
+    d.innerHTML='<span class="lt">['+l.time+']</span> <span class="l'+l.level.substr(0,1)+'">'+l.msg+'</span>';
+    lg.appendChild(d);
+   }
+   lg.scrollTop=lg.scrollHeight;
+   if(data.status==='processing')setStatus('下载中... '+data.progress,'proc');
+   if(data.status==='completed'||data.status==='failed'){
+    pol=false;btnGo.disabled=false;
+    if(data.status==='completed'){
+     var total=data.success+data.failed;
+     setStatus('✅ 完成 (成功'+data.success+'|失败'+data.failed+')','ok');
+     t0.textContent=total;t1.textContent=data.success;t2.textContent=data.failed;
+     if(data.save_dir){pt.textContent=data.save_dir;pi.style.display='block';}else{pi.style.display='none';}
+     rc.style.display='block';
+    }else{setStatus('❌ 失败','fail');}
+    tid=null;return;
+   }
+   if(pol)setTimeout(fn,1000);
+  };
+  xhr.send();
+ };
+ fn();
+}
+
+function showChangelog(){
+ fetch('/api/changelog').then(r=>r.json()).then(d=>{
+  var html='<div style="padding:16px;max-width:500px">';
+  html+='<h3 style="margin-bottom:12px">📋 更新日志 v'+d.version+'</h3>';
+  d.logs.forEach(function(log){
+   html+='<div style="margin-bottom:12px"><strong>'+log.ver+'</strong> <span style="color:var(--t3);font-size:12px">'+log.date+'</span>';
+   html+='<ul style="margin-top:6px;padding-left:20px;font-size:13px;line-height:1.8">';
+   log.items.forEach(function(item){html+='<li>'+item+'</li>';});
+   html+='</ul></div>';
+  });
+  html+='</div>';
+  var w=window.open('','_blank','width=480,height=500');
+  w.document.write('<html><head><meta charset="utf-8"><title>更新日志</title>');
+  w.document.write('<style>body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;padding:20px;background:#f0f2f5;color:#1d2129}ul{list-style:none}li::before{content:"✨ ";margin-left:-20px}</style>');
+  w.document.write('</head><body>'+html+'</body></html>');
+  w.document.close();
+ });
+}
+window.showChangelog=showChangelog;
+})();
+</script>
+</body>
+</html>
